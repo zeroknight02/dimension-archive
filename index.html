@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>次元簿 · 个人数字文化档案</title>
+<meta name="description" content="次元簿 Dimension Archive：个人数字文化档案与生活管理平台。作品、体验、收藏、资源、摘抄与知识，数据只保存在本机。" />
+<meta name="application-name" content="次元簿" />
+<meta name="theme-color" content="#17132F" />
+
+<!-- iOS PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="次元簿" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png" />
+<link rel="apple-touch-startup-image" href="assets/splash/splash-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" />
+<link rel="apple-touch-startup-image" href="assets/splash/splash-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
+<link rel="apple-touch-startup-image" href="assets/splash/splash-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+<link rel="apple-touch-startup-image" href="assets/splash/splash-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+<link rel="apple-touch-startup-image" href="assets/splash/splash-1179x2556.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
+<link rel="apple-touch-startup-image" href="assets/splash/splash-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" />
+<link rel="apple-touch-startup-image" href="assets/splash/splash-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)" />
+<link rel="apple-touch-startup-image" href="assets/splash/splash-1284x2778.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" />
+<link rel="apple-touch-startup-image" href="assets/splash/splash-1290x2796.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
+<link rel="apple-touch-startup-image" href="assets/splash/splash-1206x2622.png" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3)" />
+<link rel="apple-touch-startup-image" href="assets/splash/splash-1320x2868.png" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3)" />
+
+<!-- Android / 桌面 -->
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="48x48" href="assets/icons/favicon-48.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png" />
+<link rel="stylesheet" href="src/styles/base.css" />
+<link rel="stylesheet" href="src/styles/layout.css" />
+<link rel="stylesheet" href="src/styles/components.css" />
+<link rel="stylesheet" href="src/styles/album.css" />
+<link rel="stylesheet" href="src/styles/pages.css" />
+</head>
+<body>
+<a class="skip-link" href="#view">跳到主内容</a>
+
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar" aria-label="主导航">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"><img src="assets/icons/brand-96.png" alt="" width="38" height="38"></span>
+      <span class="brand-text"><b>次元簿</b><i>DIMENSION ARCHIVE</i></span>
+    </div>
+    <nav class="nav" id="nav-desktop"></nav>
+    <div class="side-foot">
+      <button class="side-theme" data-action="theme" aria-label="切换主题">
+        <span class="side-theme-dot" aria-hidden="true"></span><span>主题</span>
+      </button>
+      <p class="side-note">数据只存在这台设备</p>
+    </div>
+  </aside>
+
+  <main id="view" class="view" tabindex="-1"></main>
+
+  <nav class="tabbar" id="tabbar" aria-label="主导航"></nav>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="modal-root"></div>
+
+<noscript><p style="padding:40px;text-align:center;font-family:sans-serif">次元簿需要启用 JavaScript 才能使用。</p></noscript>
+
+<script>
+/* 启动自检：模块加载失败（断网、缓存残缺、直接用 file:// 打开）时给自救面板 */
+(function () {
+  var shown = false;
+  function panel(msg) {
+    if (shown || window.__BOOT_OK) return;
+    shown = true;
+    if (document.getElementById('boot-fix')) return;
+    var box = document.createElement('div');
+    box.id = 'boot-fix';
+    box.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#17132F;color:#F2EDFF;' +
+      'box-sizing:border-box;padding:56px 26px;text-align:center;' +
+      'font:15px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;';
+    box.innerHTML =
+      '<div style="font-size:19px;font-weight:600;margin-bottom:12px">页面没加载完整</div>' +
+      '<div style="font-size:14px;color:#9C93B8;margin-bottom:28px">' + msg +
+      '<br>先点「重试」；还不行再点「清除缓存重试」。<br>记录存在本机数据库，清缓存不会删除数据。</div>' +
+      '<button id="boot-retry" style="display:block;width:100%;max-width:320px;margin:0 auto 12px;' +
+      'padding:13px 0;border:0;border-radius:14px;background:#7658D6;color:#fff;font-size:16px;' +
+      'font-family:inherit;font-weight:600">重试</button>' +
+      '<button id="boot-clear" style="display:block;width:100%;max-width:320px;margin:0 auto;' +
+      'padding:13px 0;border:1px solid rgba(242,237,255,.18);border-radius:14px;background:#211B40;color:#C9BEE8;' +
+      'font-size:16px;font-family:inherit">清除缓存重试</button>';
+    document.body.appendChild(box);
+    document.getElementById('boot-retry').addEventListener('click', function () { location.reload(); });
+    document.getElementById('boot-clear').addEventListener('click', function () {
+      var btn = this; btn.disabled = true; btn.textContent = '正在清理…';
+      var jobs = [];
+      if (window.caches) jobs.push(caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); }));
+      if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+        jobs.push(navigator.serviceWorker.getRegistrations().then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); }));
+      }
+      Promise.all(jobs).catch(function () {}).then(function () { location.reload(); });
+    });
+  }
+  window.__bootFailed = panel;
+  window.addEventListener('error', function (e) {
+    var t = e.target;
+    if (t && t.tagName === 'SCRIPT') panel('脚本没能加载，多半是网络中断或本地缓存损坏。');
+  }, true);
+  setTimeout(function () {
+    if (!window.__BOOT_OK) {
+      panel(location.protocol === 'file:'
+        ? '当前是直接打开本地文件，浏览器会拦截模块加载。'
+        : '应用没能启动，可能是缓存不完整。');
+    }
+  }, 10000);
+})();
+</script>
+<script type="module" src="src/app/main.js"></script>
+</body>
+</html>
